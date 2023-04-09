@@ -5,6 +5,7 @@ using Animancer;
 using SapphireStateMachine;
 using System;
 
+[RequireComponent(typeof(StateMachine))]
 [RequireComponent(typeof(AnimationController))]
 public class PlayerController : MonoBehaviour
 {
@@ -13,11 +14,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] new Collider2D collider;
     [SerializeField] new SpriteRenderer renderer;
 
-    [SerializeField] private StateMachine stateMachine;
+    [SerializeField] StateMachine stateMachine;
 
-    [SerializeField] AnimationController animator;
+    [SerializeField] AnimationController animationController;
 
-    [SerializeField] private float movementSpeed = 5f;
+    [SerializeField] PlayerStats stats;
 
     private Vector3 inputVector;
 
@@ -44,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position += inputVector * movementSpeed * Time.fixedDeltaTime;
+        transform.position += inputVector * stats.MovementSpeed * Time.fixedDeltaTime;
     }
 
     [Serializable]
@@ -65,7 +66,7 @@ public class PlayerController : MonoBehaviour
 
         public override void OnStateEnter()
         {
-            Owner.animator.PlayAnimation("Idle");
+            Owner.animationController.PlayAnimation("Idle");
         }
         public override void OnUpdate()
         {
@@ -82,7 +83,7 @@ public class PlayerController : MonoBehaviour
 
         public override void OnStateEnter()
         {
-            Owner.animator.PlayAnimation("Walk");
+            Owner.animationController.PlayAnimation("Walk");
         }
 
         public override void OnUpdate()

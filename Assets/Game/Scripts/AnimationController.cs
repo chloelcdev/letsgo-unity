@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(AnimancerComponent))]
 public class AnimationController : MonoBehaviour
 {
