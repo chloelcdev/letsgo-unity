@@ -193,6 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugEnabled: 0
+  stateDebugReadout: 
 --- !u!114 &390678930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,7 +207,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animancer: {fileID: 390678931}
-  animations: []
+  animations:
+  - Name: Attack
+    Clip: {fileID: 7400000, guid: d8fbf1cd5df23af4abc0b7271e503846, type: 2}
+  - Name: Idle
+    Clip: {fileID: 7400000, guid: 6115c249c39f7944fa422f40ea7a80dd, type: 2}
+  - Name: Walk
+    Clip: {fileID: 7400000, guid: 552c46063bc3fc34dbe22aeccbd534dc, type: 2}
 --- !u!114 &390678931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,7 +238,7 @@ Animator:
   m_GameObject: {fileID: 390678924}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0bf031de35bcfee44a799318ec585a9f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -13,8 +13,6 @@ namespace SapphireStateMachine
         {
             currentState?.OnUpdate();
             currentState?.TryTick();
-
-            stateDebugReadout = currentState?.Name;
         }
 
         private void FixedUpdate()
@@ -35,6 +33,8 @@ namespace SapphireStateMachine
             if (debugEnabled) Debug.Log($"Left state {currentState?.Name}");
 
             currentState = state;
+
+            stateDebugReadout = state?.Name ?? "";
 
             currentState?.OnStateEnter();
 

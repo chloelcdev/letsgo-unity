@@ -24,7 +24,6 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        stateMachine = new StateMachine();
         stateMachine.SetState(new IdleState(this));
     }
 
@@ -40,7 +39,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position += inputVector * stats.MovementSpeed * Time.fixedDeltaTime;
     }
 
     [Serializable]
@@ -52,12 +50,32 @@ public class PlayerController : MonoBehaviour
 
     #region States
 
-    public class IdleState : State<PlayerController>
+    public abstract class PlayerState : State<PlayerController>
+    {
+        protected PlayerState(PlayerController _owner) : base(_owner.stateMachine, _owner) { }
+
+        protected void CheckForAttack()
+        {
+            if (Input.GetButtonDown("Fire1"))
+                stateMachine.SetState(new AttackState(Owner, "Attack"));
+        }
+
+        protected void UpdateDirection()
+        {
+            if (Owner.inputVector != Vector3.zero)
+            {
+                float angle = Mathf.Atan2(Owner.inputVector.y, Owner.inputVector.x) * Mathf.Rad2Deg;
+                Owner.transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+            }
+        }
+    }
+
+    public class IdleState : PlayerState
     {
 
         public override string Name => "Idle";
 
-        public IdleState(PlayerController owner) : base(owner?.stateMachine, owner) { }
+        public IdleState(PlayerController owner) : base(owner) { }
 
         public override void OnStateEnter()
         {
@@ -67,14 +85,16 @@ public class PlayerController : MonoBehaviour
         {
             if (Owner.inputVector.magnitude > Owner.DeadZone)
                 stateMachine.SetState(new WalkState(Owner));
+            else
+                CheckForAttack();
         }
     }
 
-    public class WalkState : State<PlayerController>
+    public class WalkState : PlayerState
     {
         public override string Name => "Walk";
 
-        public WalkState(PlayerController owner) : base(owner?.stateMachine, owner) { }
+        public WalkState(PlayerController owner) : base(owner) { }
 
         public override void OnStateEnter()
         {
@@ -85,10 +105,21 @@ public class PlayerController : MonoBehaviour
         {
             if (Owner.inputVector.magnitude <= Owner.DeadZone)
                 stateMachine.SetState(new IdleState(Owner));
+            else
+                CheckForAttack();
+
+            UpdateDirection();
         }
+
+        public override void OnFixedUpdate()
+        {
+            Owner.transform.position += Owner.inputVector * Owner.stats.MovementSpeed * Time.fixedDeltaTime;
+        }
+
+
     }
 
-    public class AttackState : State<PlayerController>
+    public class AttackState : PlayerState
     {
         public override string Name => "Attack";
 
@@ -97,12 +128,18 @@ public class PlayerController : MonoBehaviour
 
         private float endTime;
 
-        public AttackState(StateMachine stateMachine, PlayerController owner, string animationName) : base(stateMachine, owner)
+        Vector2 direction;
+
+        public AttackState(PlayerController owner, string animationName) : base(owner)
         {
             this.animationName = animationName;
 
             animation = Owner.animationController.GetClip(animationName);
             this.endTime = Time.time + animation.length;
+
+            direction = Owner.inputVector;
+
+            UpdateDirection();
         }
         
 
