@@ -14,12 +14,12 @@ namespace SapphireStateMachine
             currentState?.OnUpdate();
             currentState?.TryTick();
 
-            stateDebugReadout = currentState.Name;
+            stateDebugReadout = currentState?.Name;
         }
 
         private void FixedUpdate()
         {
-            currentState.OnFixedUpdate();
+            currentState?.OnFixedUpdate();
         }
 
         public void SetState(State state)

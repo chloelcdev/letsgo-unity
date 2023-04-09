@@ -34,7 +34,7 @@ public class AnimationController : MonoBehaviour
 
     public void UpdateAnimationsDictionary()
     {
-        animationsDict.Clear();
+        animationsDict = new Dictionary<string, AnimationClip>();
 
         foreach (NamedAnimationClip anim in animations)
             Animations.Add(anim.Name, anim.Clip);
