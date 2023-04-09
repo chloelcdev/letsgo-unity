@@ -36,11 +36,6 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         PollInput();
-
-        if (inputVector != Vector3.zero)
-            stateMachine.SetState(new WalkState(this));
-        else
-            stateMachine.SetState(new IdleState(this));
     }
 
     private void FixedUpdate()
@@ -89,6 +84,36 @@ public class PlayerController : MonoBehaviour
         public override void OnUpdate()
         {
             if (Owner.inputVector.magnitude <= Owner.DeadZone)
+                stateMachine.SetState(new IdleState(Owner));
+        }
+    }
+
+    public class AttackState : State<PlayerController>
+    {
+        public override string Name => "Attack";
+
+        private readonly string animationName;
+        public AnimationClip animation;
+
+        private float endTime;
+
+        public AttackState(StateMachine stateMachine, PlayerController owner, string animationName) : base(stateMachine, owner)
+        {
+            this.animationName = animationName;
+
+            animation = Owner.animationController.GetClip(animationName);
+            this.endTime = Time.time + animation.length;
+        }
+        
+
+        public override void OnStateEnter()
+        {
+            Owner.animationController.PlayAnimation(animationName);
+        }
+
+        public override void OnUpdate()
+        {
+            if (Time.time >= endTime)
                 stateMachine.SetState(new IdleState(Owner));
         }
     }
